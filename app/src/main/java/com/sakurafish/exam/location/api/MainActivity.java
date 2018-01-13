@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -119,8 +122,41 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+//
+//        isNetworkConnected();
+//        if(isNetworkConnected()==false)
+//        {
+//            Toast.makeText(MainActivity.this, "please connect to internet",Toast.LENGTH_LONG).show();
+//        }
+
+        checkConnection();
         createLocationRequest();
     }
+
+//    private boolean isNetworkConnected() {
+//        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//
+//        return cm.getActiveNetworkInfo() != null;
+//    }
+
+
+    protected boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public void checkConnection(){
+        if(isOnline()){
+            Toast.makeText(MainActivity.this, "You are connected to Internet", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(MainActivity.this, "You are not connected to Internet", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
@@ -326,6 +362,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onPause() {
         super.onPause();
+
+        Toast.makeText(this, "Location updated", Toast.LENGTH_LONG).show();
+
         // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
         if (mGoogleApiClient.isConnected()) {
             stopLocationUpdates();
