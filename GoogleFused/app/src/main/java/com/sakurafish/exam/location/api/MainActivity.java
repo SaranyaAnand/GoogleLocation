@@ -22,6 +22,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -36,6 +37,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sakurafish.exam.location.api.databinding.ActivityMainBinding;
 
 import java.text.DateFormat;
@@ -81,6 +84,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private String mLongitudeLabel;
     private String mLastUpdateTimeLabel;
 
+    DatabaseReference rootRef,demoRef;
+    Button submit;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +101,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         updateValuesFromBundle(savedInstanceState);
         buildGoogleApiClient();
+
+        submit = (Button) findViewById(R.id.btnSubmit);
+        //database reference pointing to root of database
+        rootRef = FirebaseDatabase.getInstance().getReference();
+
+        //database reference pointing to demo node
+        demoRef = rootRef.child("demo");
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                String value = editText.getText().toString();
+//                //push creates a unique id in database
+//                demoRef.child("value").setValue(value);UpdateLocationService
+            }
+        });
     }
 
     private void updateValuesFromBundle(Bundle savedInstanceState) {

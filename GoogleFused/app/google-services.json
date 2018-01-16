@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "489873504920",
+    "firebase_url": "https://fused-c6700.firebaseio.com",
+    "project_id": "fused-c6700",
+    "storage_bucket": "fused-c6700.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489873504920:android:589a4f7ceab1dc5f",
+        "android_client_info": {
+          "package_name": "com.sakurafish.exam.location.api"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "489873504920-bkiscfgf7re0nnjnv1hvfen68vlsa250.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6nXerPYwp0VIyF5adsBSJkcbjLDFaL8o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

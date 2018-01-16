@@ -65,5 +65,16 @@
             android:layout_marginLeft="@dimen/small_margin"
             android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/default_text_size" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="121dp"
+            android:text="Update to Firebase" />
     </LinearLayout>
+
+
 </layout>
