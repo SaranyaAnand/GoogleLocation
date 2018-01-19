@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
@@ -18,6 +20,8 @@ import com.google.android.gms.location.LocationServices;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.INTERNET;
+import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 /**
@@ -31,14 +35,14 @@ public class GoogleLocationService {
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest mLocationRequest;
 
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
-
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
 
     public GoogleLocationService(Context activity, LocationUpdateListener locationUpdateListener) {
         this.locationUpdateListener = locationUpdateListener;
         this.activity = activity;
         buildGoogleApiClient();
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -48,9 +52,37 @@ public class GoogleLocationService {
                 .addOnConnectionFailedListener(callbacks)
                 .addApi(LocationServices.API)
                 .build();
+
+        isNetworkAvailable(activity);
         createLocationRequest();
         mGoogleApiClient.connect();
     }
+    public static boolean isNetworkAvailable(Context context) {
+        boolean outcome = false;
+
+        if (context != null) {
+            ConnectivityManager cm = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            NetworkInfo[] networkInfos = cm.getAllNetworkInfo();
+            Toast.makeText(context,"please connect to internet",Toast.LENGTH_LONG).show();
+
+            for (NetworkInfo tempNetworkInfo : networkInfos) {
+
+
+                /**
+                 * Can also check if the user is in roaming
+                 */
+                if (tempNetworkInfo.isConnected()) {
+                    outcome = true;
+                    break;
+                }
+            }
+        }
+
+        return outcome;
+    }
+
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
@@ -59,10 +91,13 @@ public class GoogleLocationService {
 
     }
 
+
+
     private class GoogleServicesCallbacks implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
         @Override
         public void onConnected(Bundle bundle) {
+            isNetworkAvailable(activity);
             startLocationUpdates();
         }
 
@@ -93,7 +128,9 @@ public class GoogleLocationService {
 
     private static boolean locationEnabled(Context context) {
         boolean gps_enabled = false;
+
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (Exception ex) {
@@ -128,12 +165,14 @@ public class GoogleLocationService {
                 locationUpdateListener.canReceiveLocationUpdates();
                 startLocationUpdates();
             } else {
+
                 locationUpdateListener.cannotReceiveLocationUpdates();
                 Toast.makeText(activity, "Unable to get your location.Please turn on your device Gps", Toast.LENGTH_LONG).show();
+
             }
         } else {
             locationUpdateListener.cannotReceiveLocationUpdates();
-            Toast.makeText(activity, "Google play service not available", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, "Google play service not available", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -145,7 +184,7 @@ public class GoogleLocationService {
     //start location updates
     private void startLocationUpdates() {
 
-        if (checkSelfPermission(activity, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(activity, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(activity, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(activity, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(activity, ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED &&checkSelfPermission(activity, INTERNET) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         if (mGoogleApiClient.isConnected()) {
