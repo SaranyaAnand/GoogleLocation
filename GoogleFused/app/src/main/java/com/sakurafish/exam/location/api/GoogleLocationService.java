@@ -53,9 +53,14 @@ public class GoogleLocationService {
                 .addApi(LocationServices.API)
                 .build();
 
-        isNetworkAvailable(activity);
-        createLocationRequest();
-        mGoogleApiClient.connect();
+        if (isNetworkAvailable(activity) == true) {
+            createLocationRequest();
+            mGoogleApiClient.connect();
+        }
+        else
+        {
+            Toast.makeText(activity,"please connect to internet",Toast.LENGTH_LONG).show();
+        }
     }
     public static boolean isNetworkAvailable(Context context) {
         boolean outcome = false;
@@ -65,7 +70,6 @@ public class GoogleLocationService {
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
 
             NetworkInfo[] networkInfos = cm.getAllNetworkInfo();
-            Toast.makeText(context,"please connect to internet",Toast.LENGTH_LONG).show();
 
             for (NetworkInfo tempNetworkInfo : networkInfos) {
 
