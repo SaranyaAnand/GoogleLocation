@@ -84,6 +84,7 @@ public class LocationService extends Service {
                     Toast.makeText(context,time,Toast.LENGTH_LONG).show();
 
                     if (TextUtils.isEmpty(locationID)){
+                     //   Log.e("LocationId","==================================="+locationID);
                         createLocation(Double.toString(lat),Double.toString(lng));
                         locationID=null;
                     }
