@@ -13,7 +13,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+
+        <activity android:name="com.sakurafish.exam.location.api.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,6 +24,7 @@
 
         <service
             android:name="com.sakurafish.exam.location.api.LocationService"
+<<<<<<< HEAD
             android:enabled="true"></service>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -37,6 +39,10 @@
             android:value="@string/google_maps_key" />
             -->
 
+=======
+            android:enabled="true">
+        </service>
+>>>>>>> parent of 6a7f6b6... Done the internet connectivity and completed
     </application>
 
 </manifest>

@@ -18,9 +18,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.INTERNET;
@@ -55,20 +52,11 @@ public class GoogleLocationService {
                 .addOnConnectionFailedListener(callbacks)
                 .addApi(LocationServices.API)
                 .build();
-        //        createLocationRequest();
-        //        mGoogleApiClient.connect();
 
-        if(isNetworkAvailable(activity)==true)
-        {
-            createLocationRequest();
-            mGoogleApiClient.connect();
-        }
-        else
-        {
-            Toast.makeText(activity,"please connect to the internet",Toast.LENGTH_LONG).show();
-        }
+        isNetworkAvailable(activity);
+        createLocationRequest();
+        mGoogleApiClient.connect();
     }
-
     public static boolean isNetworkAvailable(Context context) {
         boolean outcome = false;
 
@@ -77,6 +65,7 @@ public class GoogleLocationService {
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
 
             NetworkInfo[] networkInfos = cm.getAllNetworkInfo();
+            Toast.makeText(context,"please connect to internet",Toast.LENGTH_LONG).show();
 
             for (NetworkInfo tempNetworkInfo : networkInfos) {
 
@@ -94,6 +83,7 @@ public class GoogleLocationService {
         return outcome;
     }
 
+
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
@@ -101,11 +91,13 @@ public class GoogleLocationService {
 
     }
 
+
+
     private class GoogleServicesCallbacks implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
         @Override
         public void onConnected(Bundle bundle) {
-
+            isNetworkAvailable(activity);
             startLocationUpdates();
         }
 
