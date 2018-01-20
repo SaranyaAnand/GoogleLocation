@@ -22,7 +22,7 @@
         </activity>
 
         <service
-            android:name=".LocationService"
+            android:name="com.sakurafish.exam.location.api.LocationService"
             android:enabled="true"></service>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -32,9 +32,10 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/. 
         -->
-        <meta-data
+      <!--  <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+            -->
 
     </application>
 
