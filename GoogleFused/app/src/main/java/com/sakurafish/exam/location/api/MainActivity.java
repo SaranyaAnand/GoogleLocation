@@ -11,8 +11,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
       startService(new Intent(getBaseContext(), LocationService.class));
+      showMap();
 
+    }
+
+    private void showMap() {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 }

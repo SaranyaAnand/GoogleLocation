@@ -1,0 +1,24 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=F7:0D:21:74:27:3F:5C:A7:34:B0:BB:ED:AF:42:3A:20:6F:12:22:8E%3Bcom.sakurafish.exam.location.api
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    F7:0D:21:74:27:3F:5C:A7:34:B0:BB:ED:AF:42:3A:20:6F:12:22:8E
+
+    SHA-1 certificate fingerprint:
+    F7:0D:21:74:27:3F:5C:A7:34:B0:BB:ED:AF:42:3A:20:6F:12:22:8E
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCankhGjFI935zZav6gCb_gFt2C338QlyI</string>
+</resources>
