@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -31,7 +32,7 @@ public class LocationService extends Service {
     private DatabaseReference mFirebaseDatabase;
     private FirebaseDatabase mFirebaseInstance;
     private String locationID;
-
+    public static final String ACTION_LOCATION_BROADCAST = LocationService.class.getName() + "LocationBroadcast";
     public static final String EXTRA_LATITUDE = "extra_latitude";
     public static final String EXTRA_LONGITUDE = "extra_longitude";
     private static final String TAG = LocationService.class.getSimpleName();
@@ -77,17 +78,39 @@ public class LocationService extends Service {
 
                     //Timber.e("updated location %1$s %2$s", location.getLatitude(), location.getLongitude());
 
-                    Double lat=location.getLatitude();
+                    sendMessageToUI(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+
+                  /*  Double lat=location.getLatitude();
                     Double lng=location.getLongitude();
 
                      time = "updated location %1$s %2$s"+ Double.toString(lat)+ Double.toString(lng);
                     Toast.makeText(context,time,Toast.LENGTH_LONG).show();
 
+
+                    // firebase create every time new updation
                     if (TextUtils.isEmpty(locationID)){
                         createLocation(Double.toString(lat),Double.toString(lng));
                         locationID=null;
-                    }
+                    }*/
                 }
+            }
+
+            private void sendMessageToUI(String lat, String lng) {
+
+                Log.d(TAG, "Sending info...");
+                Toast.makeText(getBaseContext(), "Updated location", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
+                intent.putExtra(EXTRA_LATITUDE, lat);
+                intent.putExtra(EXTRA_LONGITUDE, lng);
+                //firebase create location every time new........
+                if (TextUtils.isEmpty(locationID)){
+                    createLocation(lat,lng);
+                    locationID=null;
+                }
+
+                LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+
             }
 
             @Override
