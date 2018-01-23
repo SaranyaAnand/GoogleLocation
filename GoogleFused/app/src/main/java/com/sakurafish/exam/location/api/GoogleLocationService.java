@@ -35,7 +35,7 @@ public class GoogleLocationService {
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest mLocationRequest;
 
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 20000;
 
 
     public GoogleLocationService(Context activity, LocationUpdateListener locationUpdateListener) {
