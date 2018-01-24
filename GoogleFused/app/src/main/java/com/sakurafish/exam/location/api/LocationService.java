@@ -98,7 +98,7 @@ public class LocationService extends Service {
             private void sendMessageToUI(String lat, String lng) {
 
                 Log.d(TAG, "Sending info...");
-                Toast.makeText(getBaseContext(), "Updated location", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getBaseContext(), "Updated location", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
                 intent.putExtra(EXTRA_LATITUDE, lat);
@@ -108,6 +108,11 @@ public class LocationService extends Service {
                     createLocation(lat,lng);
                     locationID=null;
                 }
+
+                MapsActivity mapsActivity = new MapsActivity();
+
+                mapsActivity.moveMarker();
+
 
                 LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
 
