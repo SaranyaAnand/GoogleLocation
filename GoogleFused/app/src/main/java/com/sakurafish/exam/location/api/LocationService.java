@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -98,7 +99,7 @@ public class LocationService extends Service {
             private void sendMessageToUI(String lat, String lng) {
 
                 Log.d(TAG, "Sending info...");
-             //   Toast.makeText(getBaseContext(), "Updated location", Toast.LENGTH_SHORT).show();
+               Toast.makeText(getBaseContext(), "Updated location", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
                 intent.putExtra(EXTRA_LATITUDE, lat);
@@ -174,6 +175,8 @@ public class LocationService extends Service {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 LocationModel locationModel = dataSnapshot.getValue(LocationModel.class);
+
+
                 // Check for null
                 if (locationModel == null) {
                     Log.e(TAG, "Location data is null!");
