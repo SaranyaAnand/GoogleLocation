@@ -29,6 +29,7 @@ class GMapV2GetRouteDirection {
 
     public final static String MODE_DRIVING = "driving";
     public final static String MODE_WALKING = "walking";
+    public final static String MODE_BICYCLING= "Bicycle";
 
     public GMapV2GetRouteDirection() { }
 
@@ -135,7 +136,7 @@ class GMapV2GetRouteDirection {
         return node1.getTextContent();
     }
 
-    public ArrayList<LatLng> getDirection (Document doc) {
+    public ArrayList<LatLng>  getDirection (Document doc) {
         NodeList nl1, nl2, nl3;
         ArrayList<LatLng> listGeopoints = new ArrayList<LatLng>();
         nl1 = doc.getElementsByTagName("step");
@@ -155,7 +156,7 @@ class GMapV2GetRouteDirection {
                 locationNode = nl2.item(getNodeIndex(nl2, "polyline"));
                 nl3 = locationNode.getChildNodes();
                 latNode = nl3.item(getNodeIndex(nl3, "points"));
-                ArrayList<LatLng> arr = decodePoly(latNode.getTextContent());
+                ArrayList<LatLng> arr = decodeDirection(latNode.getTextContent());
                 for(int j = 0 ; j < arr.size() ; j++) {
                     listGeopoints.add(new LatLng(arr.get(j).latitude, arr.get(j).longitude));
                 }
@@ -181,7 +182,7 @@ class GMapV2GetRouteDirection {
         return -1;
     }
 
-    private ArrayList<LatLng> decodePoly(String encoded) {
+    private ArrayList<LatLng> decodeDirection(String encoded) {
         ArrayList<LatLng> poly = new ArrayList<LatLng>();
         int index = 0, len = encoded.length();
         int lat = 0, lng = 0;

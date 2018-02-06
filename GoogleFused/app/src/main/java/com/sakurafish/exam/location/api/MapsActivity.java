@@ -15,7 +15,12 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,8 +36,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private GoogleMap mMap;
     ArrayList markerPoints= new ArrayList();
@@ -54,12 +60,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     MarkerOptions markerToOptions;
     MarkerOptions markerFromOptions;
     Location location;
-
+    Spinner spinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps2);
         mMsgView = (TextView) findViewById(R.id.msgView);
+
+
+        //spinner element
+        spinner= (Spinner) findViewById(R.id.spinner);
+
+        //spinner clik listener
+        spinner.setOnItemSelectedListener(this);
+
+        //spinner drop down list
+        List<String> categories=new ArrayList<String>();
+        categories.add("walking");
+        categories.add("driving");
+        categories.add("bicycle");
+        categories.add("transit");
+
+        //attaching data adapter to spinner
+        ArrayAdapter<String> dataAdapter= new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, categories);
+
+        //drop down layout style- list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        //attaching data adapter to the spinner
+        spinner.setAdapter(dataAdapter);
+
 
         latitude = "0";
         longitude = "0";
@@ -88,6 +118,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // On selecting a spinner item
+        String item = parent.getItemAtPosition(position).toString();
+
+        // Showing selected spinner item
+        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+
+        GetRouteTask getRoute = new GetRouteTask(spinner.getSelectedItem().toString());
+        getRoute.execute();
+
+    }
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO Auto-generated method stub
+    }
+
     Double lat, lng;
     Marker m;
 
@@ -95,7 +141,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -156,7 +201,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                    // String url = getDirectionsUrl(origin, dest);
 
-                    GetRouteTask getRoute = new GetRouteTask();
+                    GetRouteTask getRoute = new GetRouteTask(spinner.getSelectedItem().toString());
                     getRoute.execute();
 
                 }
@@ -175,6 +220,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .title("Appiness"));*/
             }
         });
+
+
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+
+                LatLng pos = marker.getPosition();
+                toPosition = pos;
+
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+                // String url = getDirectionsUrl(origin, dest);
+
+                GetRouteTask getRoute = new GetRouteTask(spinner.getSelectedItem().toString());
+                getRoute.execute();
+
+
+            }
+        });
+
+
+
             }
 
     public void moveMarker() {
@@ -207,6 +285,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         private ProgressDialog Dialog;
         String response = "";
+
+        String mode1;
+
+        public GetRouteTask(String mode)
+        {
+            this.mode1 = mode;
+        }
+
         @Override
         protected void onPreExecute() {
             Dialog = new ProgressDialog(MapsActivity.this);
@@ -217,36 +303,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         protected String doInBackground(String... urls) {
             //Get All Route values
-            document = v2GetRouteDirection.getDocument(fromPosition, toPosition,GMapV2GetRouteDirection.MODE_DRIVING);
-            response = "Success";
+            if(fromPosition!=null && toPosition!=null) {
+                document = v2GetRouteDirection.getDocument(fromPosition, toPosition, mode1);
+                response = "Success";
+            }
+
             return response;
 
         }
 
         @Override
         protected void onPostExecute(String result) {
-            mMap.clear();
-            ArrayList points = null;
+
             if(response.equalsIgnoreCase("Success")){
-                ArrayList<LatLng> directionPoint = v2GetRouteDirection.getDirection(document);
-                PolylineOptions rectLine = new PolylineOptions().width(10).color(Color.BLUE);
-
-                for (int i = 0; i < directionPoint.size(); i++) {
-                    rectLine.add(directionPoint.get(i));
-
-                }
-                // Adding route on the map
-                mMap.addPolyline(rectLine);
-
-                markerFromOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                markerToOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-
-
-                markerToOptions.position(toPosition);
-                markerFromOptions.position(fromPosition);
-                mMap.addMarker(markerToOptions);
-                mMap.addMarker(markerFromOptions);
-
+                drawPolyline();
             }
 
             Dialog.dismiss();
@@ -257,6 +327,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onStop();
         finish();
     }
+
+    private void drawPolyline()
+    {
+
+        mMap.clear();
+        ArrayList points = null;
+
+
+        ArrayList<LatLng> directionPoint = v2GetRouteDirection.getDirection(document);
+        PolylineOptions rectLine = new PolylineOptions().width(10).color(Color.BLUE);
+
+        for (int i = 0; i < directionPoint.size(); i++) {
+            rectLine.add(directionPoint.get(i));
+
+        }
+        // Adding route on the map
+        mMap.addPolyline(rectLine);
+
+        markerFromOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        markerFromOptions.draggable(true);
+        markerToOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        markerToOptions.draggable(true);
+
+
+        markerToOptions.position(toPosition);
+        markerFromOptions.position(fromPosition);
+        mMap.addMarker(markerToOptions);
+        mMap.addMarker(markerFromOptions);
+    }
+
 
 }
 
